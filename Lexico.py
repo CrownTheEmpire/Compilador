@@ -1,14 +1,3 @@
-class TipoSimbolo:
-    _ERROR = -1 
-    _IDENTIFICADOR = 0
-    _OPADIC = 1
-    _OPMULT = 2
-    _PESOS = 3
-    _ENTERO = 4
-
-    _tiposInt = {'ERROR': -1, 'IDENTIFICADOR': 0, 'OPADIC': 1, 'OPMULT': 2, 'PESOS': 3, 'ENTERO': 4}
-    _tiposCad = {-1:'ERROR', 0: 'IDENTIFICADOR', 1: 'OPADIC', 2: 'OPMULT', 3: 'PESOS', 4: 'ENTERO'}
-
 class Lexico:
     _tiposInt = {'ERROR': -1, 'IDENTIFICADOR': 0, 'OPADIC': 1, 'OPMULT': 2, 'PESOS': 3, 'ENTERO': 4}
     _tiposCad = {-1:'ERROR', 0: 'IDENTIFICADOR', 1: 'OPADIC', 2: 'OPMULT', 3: 'PESOS', 4: 'ENTERO'}
