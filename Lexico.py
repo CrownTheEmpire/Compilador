@@ -1,4 +1,5 @@
 class Lexico:
+    #Comprobar la adicion de esta linea en el Hub, y verificar el comportamiento de la rama actual y la 'master'
     _tiposInt = {'ERROR': -1, 'IDENTIFICADOR': 0, 'OPADIC': 1, 'OPMULT': 2, 'PESOS': 3, 'ENTERO': 4}
     _tiposCad = {-1:'ERROR', 0: 'IDENTIFICADOR', 1: 'OPADIC', 2: 'OPMULT', 3: 'PESOS', 4: 'ENTERO'}
     
