@@ -1,7 +1,16 @@
 class Lexico:
     #Comprobar la adicion de esta linea en el Hub, y verificar el comportamiento de la rama actual y la 'master'
-    _tiposInt = {'ERROR': -1, 'IDENTIFICADOR': 0, 'OPADIC': 1, 'OPMULT': 2, 'PESOS': 3, 'ENTERO': 4}
-    _tiposCad = {-1:'ERROR', 0: 'IDENTIFICADOR', 1: 'OPADIC', 2: 'OPMULT', 3: 'PESOS', 4: 'ENTERO'}
+    _tiposInt = {'ERROR': -1, 'IDENTIFICADOR': 0, 'ENTERO': 1, 'REAL': 2,
+                 'CADENA': 3, 'TIPO': 4, 'OPSUMA': 5, 'OPMUL': 6, 'OPRELAC': 7,
+                 'OPOR': 8, 'OPAND': 9, 'OPNOT': 10, 'OPIGUALDAD': 11, ';': 12,
+                 ',': 13, '(': 14, ')': 15, '{': 16, '}': 17, '=': 18, 'if': 19,
+                 'while': 20, 'return': 21, 'else': 22, '$': 23}
+    
+    _tiposCad = {-1: 'ERROR', 0: 'IDENTIFICADOR', 1: 'ENTERO', 2: 'REAL',
+                 3: 'CADENA', 4: 'TIPO', 5: 'OPSUMA', 6: 'OPMUL', 7: 'OPRELAC',
+                 8: 'OPOR', 9: 'OPAND', 10: 'OPNOT', 11: 'OPIGUALDAD', 12: ';',
+                 13: ',', 14: '(', 15: ')', 16: '{', 17: '}', 18: '=', 19: 'if',
+                 20: 'while', 21: 'return', 22: 'else', 23: '$'}
     
     #constructor
     def __init__(self, fuente=""):
@@ -12,7 +21,7 @@ class Lexico:
         self.__c = ''
         self.__estado = 0
 
-        #publicas
+        #Publicas
         self.simbolo = ""
         self.tipo = 0
         
@@ -22,7 +31,7 @@ class Lexico:
             return '$'
 
         caracter = self.__fuente[self.__ind]
-        self.__ind = self.__ind + 1
+        self.__ind += 1
         return caracter
 
     def __sigEstado(self, estado):
@@ -32,7 +41,6 @@ class Lexico:
     def __aceptacion(self, estado):
         self.__sigEstado(estado)
         self.__continua = 0
-        #print("Esto es: ", self.__estado, " y: ", self.__continua)
 
     def __esLetra(self, c):
         return c.isalpha() or c == "_"
@@ -43,9 +51,10 @@ class Lexico:
     def __esEspacio(self, c):
         return c.isspace()
 
+    #Verificar retroceso cuando se llegue al final de la entrada
     def __retroceso(self):
         if self.__c != '$':
-            self.__ind += 1
+            self.__ind -= 1
             
         self.__continua = 0
 
@@ -55,7 +64,6 @@ class Lexico:
         
 
     def tipoAcad(self, tipo):
-        self.__aceptacion(3)
         return self._tiposCad[tipo]
         
     def sigSimbolo(self):
@@ -68,37 +76,169 @@ class Lexico:
             
             self.__c = self.__sigCaracter()
 
-            #ignorar cualquier espacio
-            while self.__esEspacio(self.__c):
-                self.__c = self.__sigCaracter()
-
             if self.__estado == 0:
-                if self.__c == '+' or self.__c == '-':
-                    self.__aceptacion(self._tiposInt['OPADIC'])
+                if self.__esLetra(self.__c):
+                    self.__sigEstado(1)
+
+                elif self.__esDigito(self.__c):
+                    self.__sigEstado(2)
+
+                
+                elif self.__c == '+' or self.__c == '-':
+                    self.__aceptacion(self._tiposInt['OPSUMA'])
 
                 elif self.__c == '*' or self.__c == '/':
-                    self.__aceptacion(self._tiposInt['OPMULT'])
+                    self.__aceptacion(self._tiposInt['OPMUL'])
+
+                elif self.__c == '=':
+                    self.__sigEstado(7)
+
+                elif self.__c == '<' or self.__c == '>':
+                    self.__sigEstado(9)
+
+                elif self.__c == '!':
+                    self.__sigEstado(11)
+
+                elif self.__c == '&':
+                    self.__sigEstado(13)
+
+                elif self.__c == '|':
+                    self.__sigEstado(15)
+
+                elif self.__c == '(':
+                    self.__aceptacion(self._tiposInt['('])
+
+                elif self.__c == ')':
+                    self.__aceptacion(self._tiposInt[')'])
+
+                elif self.__c == '{':
+                    self.__aceptacion(self._tiposInt['{'])
+
+                elif self.__c == '}':
+                    self.__aceptacion(self._tiposInt['}'])
+
+                elif self.__c == ';':
+                    self.__aceptacion(self._tiposInt[';'])
+
+                elif self.__c == ',':
+                    self.__aceptacion(self._tiposInt[','])
+
+                elif self.__c == '"':
+                    self.__sigEstado(20)
 
                 elif self.__c == '$':
-                    self.__aceptacion(self._tiposInt['PESOS'])
+                    self.__aceptacion(self._tiposInt['$'])
+
+                elif self.__esEspacio(self.__c):
+                    #Ignorar los espacios en blanco; hacer nada.
+                    pass
 
                 else:
                     self.__aceptacion(self._tiposInt['ERROR'])
 
             elif self.__estado == 1:
-                pass
+                if self.__esLetra(self.__c) or self.__esDigito(self.__c):
+                    self.__sigEstado(1)
 
+                else:
+                    self.__estado = self._tiposInt['IDENTIFICADOR']
+                    self.__continua = 0
+                    self.__retroceso()
+                    
+
+            elif self.__estado == 2:
+                if self.__esDigito(self.__c):
+                    self.__sigEstado(2)
+
+                elif self.__c == '.':
+                    self.__sigEstado(3)
+
+                elif self.__esLetra(self.__c):
+                    self.__aceptacion(self._tiposInt['ERROR'])
+
+                else:
+                    self.__estado = self._tiposInt['ENTERO']
+                    self.__continua = 0
+                    self.__retroceso()
+                    
             elif self.__estado == 3:
-                pass
+                if self.__esDigito(self.__c):
+                    self.__sigEstado(4)
+
+                else:
+                    self.__aceptacion(self._tiposInt['ERROR'])
 
             elif self.__estado == 4:
-                pass
+                if self.__esDigito(self.__c):
+                    self.__sigEstado(4)
 
+                elif self.__esLetra(self.__c):
+                    self.__aceptacion(self._tiposInt['ERROR'])
+
+                else:
+                    self.__estado = self._tiposInt['REAL']
+                    self.__continua = 0
+                    self.__retroceso()
+
+            elif self.__estado == 7:
+                if self.__c == '=':
+                    self.__aceptacion(self._tiposInt['OPIGUALDAD'])
+
+                else:
+                    self.__estado = self._tiposInt['=']
+                    self.__continua = 0
+                    self.__retroceso()
+
+            elif self.__estado == 9:
+                if self.__c == '=':
+                    self.__aceptacion(self._tiposInt['OPRELAC'])
+
+                else:
+                    self.__estado = self._tiposInt['OPRELAC']
+                    self.__continua = 0
+                    self.__retroceso()
+
+            elif self.__estado == 11:
+                if self.__c == '=':
+                    self.__aceptacion(self._tiposInt['OPIGUALDAD'])
+
+                else:
+                    self.__estado = self._tiposInt['OPNOT']
+                    self.__continua = 0
+                    self.__retroceso()
+
+            elif self.__estado == 13:
+                if self.__c == '&':
+                    self.__aceptacion(self._tiposInt['OPAND'])
+
+                else:
+                    self.__aceptacion(self._tiposInt['ERROR'])
+
+            elif self.__estado == 15:
+                if self.__c == '|':
+                    self.__aceptacion(self._tiposInt['OPOR'])
+
+                else:
+                    self.__aceptacion(self._tiposInt['ERROR'])
+
+            elif self.__estado == 20:
+                if self.terminado():
+                    self.__aceptacion(self._tiposInt['ERROR'])
+                
+                if self.__c != '"' :
+                    self.__sigEstado(20)
+
+                else:
+                    self.__estado = self._tiposInt['CADENA']
+                    self.__continua = 0
+                    #self.__retroceso()
+                    
+            
             else:
                 self.__aceptacion(self._tiposInt['ERROR'])
 
         #para test
-        return self.simbolo, self._tiposCad[self.__estado]
+        return self.simbolo, self._tiposCad[self.__estado], self.__estado
 
     def terminado(self):
         return self.__ind >= len(self.__fuente)
@@ -121,10 +261,7 @@ class Lexico:
         return self.__estado
         
 
-l = Lexico("+ *          f    / \t -")
-print (l.sigSimbolo())
-print (l.sigSimbolo())
-print (l.sigSimbolo())
-print (l.sigSimbolo())
-print (l.sigSimbolo())
-input('wut?')
+l = Lexico(input("Escribe la cadena a procesar: "))
+while not l.terminado():
+    print (l.sigSimbolo())
+input('')
