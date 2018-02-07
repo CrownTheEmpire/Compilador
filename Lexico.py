@@ -238,7 +238,8 @@ class Lexico:
                 self.__aceptacion(self._tiposInt['ERROR'])
 
         #para test
-        return self.simbolo, self._tiposCad[self.__estado], self.__estado
+        self.tipo = self.__estado
+        return self.simbolo, self._tiposCad[self.__estado], self.tipo 
 
     def terminado(self):
         return self.__ind >= len(self.__fuente)
@@ -260,8 +261,3 @@ class Lexico:
     def getEstado(self):
         return self.__estado
         
-
-l = Lexico(input("Escribe la cadena a procesar: "))
-while not l.terminado():
-    print (l.sigSimbolo())
-input('')
