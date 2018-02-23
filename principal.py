@@ -46,7 +46,7 @@ def ejemplo3():
     accion = tablaLR.get((fila,columna), 0)
 
     #mostrar lo que esta sucediendo
-    print ("pila: ", end = " ")
+    print ("pila: ", end=" ")
     pila.muestra()
     print ()
     print ("lex.tipo: ", lexico.tipo)
@@ -219,7 +219,212 @@ def ejercicio1():
     if aceptacion:
         print("Aceptado")
         
-ejemplo1()
-ejemplo2()
-ejemplo3()
-ejercicio1()
+        
+    
+def ejercicio2():
+    idReglas = [3, 3] #la regla E, se encuentra especificada en la columna 3
+    #la primera regla E -> <id>+E, tiene una longitud de 3
+    #la segunda regla E -> <id>, tiene una longitud de 1
+    lonReglas = [3, 1]
+    tablaLR =  {(0,Lexico._tiposInt['IDENTIFICADOR']): 2,
+                (0,3): 1,
+                (1,Lexico._tiposInt['$']): -1,
+                (2,Lexico._tiposInt['OPSUMA']): 3,
+                (2,Lexico._tiposInt['$']): -3,
+                (3,Lexico._tiposInt['IDENTIFICADOR']): 2,
+                (3,3): 4,
+                (4,Lexico._tiposInt['$']): -2}
+    
+    
+    #Preparar la pila
+    pila = Pila()
+    fila = 0
+    columna = 0
+    accion = 0
+    aceptacion = 0
+    
+    #Establecer la cadena de entrada
+    lexico = Lexico("alpha + betha - delta")
+
+    #Adecuar la pila
+    pila.push(Lexico._tiposInt['$'])
+    pila.push(0);
+    
+    #solicitar el simbolo al Lexico "a"
+    lexico.sigSimbolo()
+    #verificar si el simbolo en pila.top() tiene un desplazamiento o transicion con
+    #respecto a lexico.tipo conforme a la tablaLR
+    
+    while not aceptacion:  
+        
+        fila = pila.top()
+        columna = lexico.tipo
+        accion = tablaLR.get((fila,columna), 0)
+        
+        #aceptacion = accion == -1
+        
+        print()
+        print("entrada:", lexico.simbolo)
+        print("pila:", end = " ")
+        pila.muestra()
+        print()
+        print("accion:", accion, "Tipo:", lexico.tipo)
+        
+        if accion > 0:
+            pila.push(lexico.tipo)
+            pila.push(accion)
+            
+            #solicitar el simbolo al Lexico
+            lexico.sigSimbolo()
+        
+        elif accion < 0:
+            if accion == -1:
+                aceptacion = 1
+                break
+                
+            regla = (-1) * (accion + 2)
+            print("REGLA:", regla+1)
+            print("Longitud:", lonReglas[regla])
+            """for cantidad in range(lonReglas[regla]):
+                pila.pop()
+                pila.pop()"""
+            i = 0;
+            while i < lonReglas[regla]:
+                pila.pop()
+                print("pop")
+                pila.pop()
+                print("pop")
+                i += 1
+                
+            #sigue una transicion, se calcula entonces
+            #print("idRegla:", idReglas[regla])
+            fila = pila.top()
+            #print("fila:", fila)
+            columna = idReglas[regla]
+            #print("ACCION:", tablaLR.get((fila, columna),0))
+            accion = tablaLR.get((fila, columna),0)
+
+            #Se realiza la transicion
+            pila.push(idReglas[regla])
+            pila.push(accion)
+
+        else:
+            break
+
+        input("...")
+    
+        
+    if aceptacion:
+        print ("ACEPTADO")
+        
+    else:
+        print ("ERROR")
+
+
+def ejercicio3():
+    Reglas = ["E", "E"]
+    idReglas = [3, 3] #la regla E, se encuentra especificada en la columna 3
+    #la primera regla E -> <id>+E, tiene una longitud de 3
+    #la segunda regla E -> <id>, tiene una longitud de 1
+    lonReglas = [3, 1]
+    tablaLR =  {(0,Lexico._tiposInt['IDENTIFICADOR']): 2,
+                (0,3): 1,
+                (1,Lexico._tiposInt['$']): -1,
+                (2,Lexico._tiposInt['OPSUMA']): 3,
+                (2,Lexico._tiposInt['$']): -3,
+                (3,Lexico._tiposInt['IDENTIFICADOR']): 2,
+                (3,3): 4,
+                (4,Lexico._tiposInt['$']): -2}
+    
+    
+    #Preparar la pila
+    pila = Pila()
+    fila = 0
+    columna = 0
+    accion = 0
+    aceptacion = 0
+    
+    #Establecer la cadena de entrada
+    lexico = Lexico("alpha + betha - delta")
+
+    #Adecuar la pila
+    pila.push('$')
+    pila.push(0);
+    
+    #solicitar el simbolo al Lexico "a"
+    lexico.sigSimbolo()
+    #verificar si el simbolo en pila.top() tiene un desplazamiento o transicion con
+    #respecto a lexico.tipo conforme a la tablaLR
+    
+    while not aceptacion:  
+        
+        fila = pila.top()
+        columna = lexico.tipo
+        accion = tablaLR.get((fila,columna), 0)
+        
+        #aceptacion = accion == -1
+        
+        print()
+        print("entrada:", lexico.simbolo)
+        print("pila:", end = " ")
+        pila.muestra()
+        print()
+        print("accion:", accion, "Tipo:", lexico.tipo)
+        
+        if accion > 0:
+            pila.push(lexico.simbolo)
+            pila.push(accion)
+            
+            #solicitar el simbolo al Lexico
+            lexico.sigSimbolo()
+        
+        elif accion < 0:
+            if accion == -1:
+                aceptacion = 1
+                break
+                
+            regla = (-1) * (accion + 2)
+            print("REGLA:", regla+1)
+            print("Longitud:", lonReglas[regla])
+
+            i = 0;
+            while i < lonReglas[regla]:
+                pila.pop()
+                print("pop")
+                pila.pop()
+                print("pop")
+                i += 1
+                
+            #sigue una transicion, se calcula entonces
+            #print("idRegla:", idReglas[regla])
+            fila = pila.top()
+            #print("fila:", fila)
+            columna = idReglas[regla]
+            #print("ACCION:", tablaLR.get((fila, columna),0))
+            accion = tablaLR.get((fila, columna),0)
+
+            #Se realiza la transicion
+            pila.push(Reglas[regla])
+            pila.push(accion)
+
+        else:
+            break
+
+        input("...")
+    
+        
+    if aceptacion:
+        print ("ACEPTADO")
+        
+    else:
+        print ("ERROR")
+    
+    
+#ejemplo1()
+#ejemplo2()
+#ejemplo3()
+#ejercicio1()
+#ejercicio2()
+#ejercicio3()
+
+

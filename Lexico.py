@@ -237,7 +237,22 @@ class Lexico:
             else:
                 self.__aceptacion(self._tiposInt['ERROR'])
 
-        #para test
+        
+        if self.simbolo == "if":
+            self.__estado = self._tiposInt['if']
+
+        elif self.simbolo == "else":
+            self.__estado = self._tiposInt['else']
+
+        elif self.simbolo == "while":
+            self.__estado = self._tiposInt['while']
+
+        elif self.simbolo == "return":
+            self.__estado = self._tiposInt['return']
+
+        elif self.simbolo == "int" or self.simbolo == "float" or self.simbolo == "void":
+            self.__estado = self._tiposInt['TIPO']
+        
         self.tipo = self.__estado
         return self.simbolo, self._tiposCad[self.__estado], self.tipo 
 
@@ -260,4 +275,8 @@ class Lexico:
 
     def getEstado(self):
         return self.__estado
-        
+
+
+"""l = Lexico("int, float, void,  return;")
+while not l.terminado():
+    print(l.sigSimbolo())"""
