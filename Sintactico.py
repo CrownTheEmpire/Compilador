@@ -1,16 +1,30 @@
 from Lexico import Lexico
+from Lexico import TipoSimbolo
 from Pila import Pila
+from Pila import Terminal
+from Pila import NoTerminal
+from Pila import Estado
+from ArbolSintactico import *
+
 
 class Sintactico:
     def __init__(self):
-        self.__lexico = Lexico();
+        self.__lexico = Lexico()
+        self.__pila = Pila()
+        self.__nodoArbol = None
         self.__reglas = []
         self.__idReglas = []
         self.__lonReglas = []
         self.__tablaLR = []
 
     def getLexico(self):
-        return self.__lexico                                                                       
+        return self.__lexico  
+
+    def getPila(self):
+        return self.__pila
+
+    def getNodoArbol(self):
+        return self.__nodoArbol
 
     def getReglas(self):
         return self.__reglas
@@ -70,25 +84,26 @@ class Sintactico:
         fila = 0
         columna = 0
         accion = 0
-        aceptacion = 0
+        aceptacion = False
     
         #Establecer la cadena de entrada
         #self.__lexico = Lexico("void funcionA(){ } \n int funcionB(float suma){  }")
 
         #Adecuar la pila
-        pila.push('$')
-        pila.push(0)
+        pila.push(Terminal(TipoSimbolo._tipoInt['$'], "$"))
+        pila.push(Estado(0))
     
         #solicitar el simbolo al Lexico
         self.__lexico.sigSimbolo()
+
+        raiz = Nodo()
+
         #verificar si el simbolo en pila.top() tiene un desplazamiento o transicion con
         #respecto a lexico.tipo conforme a la tablaLR
-    
         while not aceptacion:
-            fila = pila.top()
+            fila = pila.top().getId()
             columna = self.__lexico.tipo
             accion = int(self.__tablaLR[fila][columna]) #Hacer que el vector almacene enteros!!!
-        
         
             print()
             print("entrada:", self.__lexico.simbolo)
@@ -98,57 +113,193 @@ class Sintactico:
             print("accion:", accion, "Tipo:", self.__lexico.tipo)
         
             if accion > 0:
-                pila.push(self.__lexico.simbolo)
-                pila.push(accion)
+                pila.push( Terminal(self.__lexico.tipo, self.__lexico.simbolo) ) #Terminal self.lexico.simbolo
+                pila.push( Estado(accion) ) #Estado
                 
                 #solicitar el simbolo al Lexico
                 self.__lexico.sigSimbolo()
             
             elif accion < 0:
                 if accion == -1:
-                    aceptacion = 1
+                    aceptacion = True
+                    pila.pop()
+                    self.__nodoArbol = pila.pop().getNodo()
                     break
                     
                 regla = (-1) * (accion + 2)
-                print("REGLA:", regla+1)
-                print("Longitud:", self.__lonReglas[regla])
-    
-                i = 0;
-                while i < int(self.__lonReglas[regla]): #Hacer que el vector almacene enteros!!!
-                    pila.pop()
-                    pila.pop()
+                #print("REGLA:", regla+1, self.__reglas[regla])
+                #print("Longitud:", self.__lonReglas[regla])
+
+
+                #i = 0;
+                """while i < int(self.__lonReglas[regla]): #Hacer que el vector almacene enteros!!!
+                    pila.pop() #quita el Estado
+                    pila.pop() #quita el Terminal o el NoTerminal
                     i += 1
-                print("pop *", i * 2)
-                    
+                print("pop *", i * 2)"""
+
+                nodoArbol = self.crearNodo(regla+1, pila)
+                
                 #sigue una transicion, se calcula entonces
-                fila = pila.top()
+                fila = pila.top().getId()
                 columna = self.__idReglas[regla]
                 accion = int(self.__tablaLR[int(fila)][int(columna)]) #Hacer que el vector almacene enteros!!!
     
                 #Se realiza la transicion
-                pila.push(self.__reglas[regla])
-                pila.push(accion)
+                noTerminal = NoTerminal(regla, self.__lexico.simbolo) #, self.__reglas[regla]
+                noTerminal.setNodo(nodoArbol)
+                pila.push( noTerminal )
+                pila.push( Estado(accion) )
     
             else:
                 break
-    
+            
             #input("...")
+
+##        print("*******", nodoArbol)
         
         
         if aceptacion:
             return (1, "Aceptado")
             
         else:
-            return (0, "No aceptado.")
-            
+            self.__nodoArbol = Error()
+            return (0, "No aceptado")
+    
+    def crearNodo(self, numero, pila):
+        print("numero VALE: ", numero)
+        if numero == 1:
+            return Programa(pila, numero)
 
-"""s = Sintactico()
+        elif numero == 2 or numero == 3:
+            return Definiciones(pila, numero)
+
+        elif numero == 4 or numero == 5:
+            return Definicion(pila, numero)
+
+        elif numero == 6:
+            return DefVar(pila, numero)
+
+        elif numero == 7:
+            return ListaVar(pila, numero)
+
+        elif numero == 8:
+            return ListaVar(pila, numero)
+
+        elif numero == 9:
+            return DefFunc(pila, numero)
+
+        elif numero == 10 or numero == 11:
+            return Parametros(pila, numero)
+        
+        elif numero == 12 or numero == 13:
+            return ListaParam(pila, numero)
+
+        elif numero == 14:
+            return BloqFunc(pila, numero)
+
+        elif numero == 15 or numero == 16:
+            return DefLocales(pila, numero)
+
+        elif numero == 17 or numero == 18:
+            return DefLocal(pila, numero)
+
+        elif numero == 19 or numero == 20:
+            return Sentencias(pila, numero)
+
+        elif numero == 21:
+            return Sentencia(pila, numero)
+
+        elif numero == 22:
+            return Sentencia(pila, numero)
+
+        elif numero == 23:
+            return Sentencia(pila, numero)
+
+        elif numero == 24:
+            return Sentencia(pila, numero)
+
+        elif numero == 25:
+            return Sentencia(pila, numero)
+
+        elif numero == 26 or numero == 27:
+            return Otro(pila, numero)
+
+        elif numero == 28:
+            return Bloque(pila, numero)
+
+        elif numero == 29 or numero == 30:
+            return ValorRegresa(pila, numero)
+
+        elif numero == 31 or numero == 32:
+            return Argumentos(pila, numero)
+
+        elif numero == 33 or numero == 34:
+            return ListaArgumentos(pila, numero)
+
+        elif numero == 35:
+            return Termino(pila,numero)
+
+        elif numero == 36:
+            return Termino(pila,numero)
+
+        elif numero == 37:
+            return Termino(pila,numero)
+
+        elif numero == 38:
+            return Termino(pila,numero)
+
+        elif numero == 39:
+            return Termino(pila,numero)
+
+        elif numero == 40:
+            return LlamadaFunc(pila, numero)
+
+        elif numero == 41 or numero == 42:
+            return SentenciaBloque(pila, numero)
+
+        elif numero == 43:
+            return Expresion(pila, numero)
+
+        elif numero == 44:
+            return Expresion(pila, numero)
+
+        elif numero == 45:
+            return Expresion(pila, numero)
+
+        elif numero == 46:
+            return Expresion(pila, numero)
+
+        elif numero == 47:
+            return Expresion(pila, numero)
+
+        elif numero == 48:
+            return Expresion(pila, numero)
+
+        elif numero == 49:
+            return Expresion(pila, numero)
+
+        elif numero == 50:
+            return Expresion(pila, numero)
+
+        elif numero == 51:
+            return Expresion(pila, numero)
+
+        elif numero == 52:
+            return Expresion(pila, numero)
+
+        return None 
+
+
+s = Sintactico()
 s.cargarGramatica("compilador.lr")
 
-print(s.getReglas())
-print(s.getIdReglas())
-print(s.getLonReglas())
-print(s.getTablaLR())
+"""s.getReglas()
+s.getIdReglas()
+s.getLonReglas()
+s.getTablaLR()"""
 
-s.analizar()"""
-    
+s.getLexico().setEntrada("void main() { int a, b, c;  a = 3; b = c - (4 * a); } int hola(float msg){ print(msg); } float retorno(){ return 0.0; }")
+
+print(s.analizar())
+print(s.getNodoArbol().mostrar())

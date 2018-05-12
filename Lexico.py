@@ -1,3 +1,24 @@
+class TipoSimbolo:
+    """docstring for TipoSimbolo"""
+    _tipoInt = {'ERROR': -1, 'IDENTIFICADOR': 0, 'ENTERO': 1, 'REAL': 2,
+                 'CADENA': 3, 'TIPO': 4, 'OPSUMA': 5, 'OPMUL': 6, 'OPRELAC': 7,
+                 'OPOR': 8, 'OPAND': 9, 'OPNOT': 10, 'OPIGUALDAD': 11, ';': 12,
+                 ',': 13, '(': 14, ')': 15, '{': 16, '}': 17, '=': 18, 'if': 19,
+                 'while': 20, 'return': 21, 'else': 22, '$': 23}
+
+    _tipoCad = {-1: 'ERROR', 0: 'IDENTIFICADOR', 1: 'ENTERO', 2: 'REAL',
+                 3: 'CADENA', 4: 'TIPO', 5: 'OPSUMA', 6: 'OPMUL', 7: 'OPRELAC',
+                 8: 'OPOR', 9: 'OPAND', 10: 'OPNOT', 11: 'OPIGUALDAD', 12: ';',
+                 13: ',', 14: '(', 15: ')', 16: '{', 17: '}', 18: '=', 19: 'if',
+                 20: 'while', 21: 'return', 22: 'else', 23: '$'}
+
+    def __init__(self, arg):
+        pass
+
+
+        
+       
+
 class Lexico:
     #Comprobar la adicion de esta linea en el Hub, y verificar el comportamiento de la rama actual y la 'master'
     _tiposInt = {'ERROR': -1, 'IDENTIFICADOR': 0, 'ENTERO': 1, 'REAL': 2,

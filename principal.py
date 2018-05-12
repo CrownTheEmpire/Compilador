@@ -382,7 +382,7 @@ def ejercicio3():
                 break
                 
             regla = (-1) * (accion + 2)
-            print("REGLA:", regla+1)
+            print("REGLA:", regla+1, " -", Reglas[regla])
             print("Longitud:", lonReglas[regla])
 
             i = 0;
@@ -437,7 +437,6 @@ except:
 s = Sintactico()
 s.getLexico().setEntrada(entrada)
 s.cargarGramatica("compilador.lr")
-print(s.getReglas())
+#print(s.getReglas())
 r = s.analizar()
-print(r);
-
+print(r)

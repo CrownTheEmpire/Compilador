@@ -1,16 +1,1 @@
-int funcionA(float fi)
-{
-	int aux;
-	aux = fi * 10;
-	return aux;
-}
-
-void funcionB(int a, int b)
-{
-	while(a < b)
-	{
-		a = a+b;
-	}
-
-	printf("El resultado de la suma es: %i", a);
-}
+int main(){ a = b; }
