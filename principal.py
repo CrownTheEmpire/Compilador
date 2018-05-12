@@ -1,5 +1,6 @@
 from Pila import Pila
 from Lexico import Lexico
+from Sintactico import Sintactico
 
 def ejemplo1():
     pila = Pila()
@@ -217,9 +218,7 @@ def ejercicio1():
     aceptacion = accion == -1
     
     if aceptacion:
-        print("Aceptado")
-        
-        
+        print("Aceptado")       
     
 def ejercicio2():
     idReglas = [3, 3] #la regla E, se encuentra especificada en la columna 3
@@ -319,7 +318,6 @@ def ejercicio2():
         
     else:
         print ("ERROR")
-
 
 def ejercicio3():
     Reglas = ["E", "E"]
@@ -427,4 +425,19 @@ def ejercicio3():
 #ejercicio2()
 #ejercicio3()
 
+try:
+    f = open("entrada.txt")
+    entrada = f.read()
+    f.close()
+        
+except:
+    print("Error de lectura, archivo de entrada no disponible.")
+    exit(0)
+
+s = Sintactico()
+s.getLexico().setEntrada(entrada)
+s.cargarGramatica("compilador.lr")
+print(s.getReglas())
+r = s.analizar()
+print(r);
 

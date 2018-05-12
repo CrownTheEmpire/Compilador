@@ -20,7 +20,7 @@ class Pila:
             i -= 1
 
     def __str__(self):
-        return self.__lista
+        return self.__lista                                                                        
             
 
 

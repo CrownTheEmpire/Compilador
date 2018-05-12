@@ -59,7 +59,7 @@ class Lexico:
         self.__continua = 0
 
     #Metodos publicos
-    def entrada(self, fuente):
+    def setEntrada(self, fuente):
         self.__fuente = fuente
         
 

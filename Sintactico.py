@@ -9,6 +9,9 @@ class Sintactico:
         self.__lonReglas = []
         self.__tablaLR = []
 
+    def getLexico(self):
+        return self.__lexico                                                                       
+
     def getReglas(self):
         return self.__reglas
 
@@ -31,23 +34,25 @@ class Sintactico:
         except:
             print("Error de lectura, archivo no disponible.")
 
-        lim = int(lineas[0])
+        lim = int(lineas[0]) #Obtener el numero de reglas; indicado en la primera linea del archivo
 
+        #Recuperar los datos de las reglas; iterar segun la cantidad de reglas.
         i = 1
         while i <= lim:
             #print("cadena[",i,"]",listaCadenas[i])
             linea = lineas[i].split()
             #print("linea:", linea)
-            self.__idReglas.append(linea[0])
-            self.__lonReglas.append(linea[1])
-            self.__reglas.append(linea[2])
+            self.__idReglas.append(linea[0]) #la primera columna contiene el "id" de la regla.
+            self.__lonReglas.append(linea[1]) #la segunda columna contiene la "longitud" de la regla.
+            self.__reglas.append(linea[2]) #la tercer columna contiene la regla
             i += 1
 
-        filas = lineas[i].split()[0]
-        #print("filas:", filas)
-        columnas = lineas[i].split()[1]
-        #print("columnas:", columnas)
+        #Despues de leer las reglas, obtener la cantidad de filas y columnas contenida en la siguiente
+        # linea, es decir: donde se quedo el iterador
+        filas = lineas[i].split()[0] #numero de filas contenido en la primera columna
+        columnas = lineas[i].split()[1] #numero de columnas contenido en la segunda columna
 
+        #Obtener la tabla LR contenida en el resto del archivo
         i += 1
         while i < len(lineas):
             fila = lineas[i].split()
@@ -57,6 +62,9 @@ class Sintactico:
 
 
     def analizar(self):
+        if len(self.__reglas) == 0:
+            return -1, "Error, no existe Gramatica"
+
         #Preparar la pila
         pila = Pila()
         fila = 0
@@ -65,7 +73,7 @@ class Sintactico:
         aceptacion = 0
     
         #Establecer la cadena de entrada
-        self.__lexico = Lexico("void funcionA(){}")
+        #self.__lexico = Lexico("void funcionA(){ } \n int funcionB(float suma){  }")
 
         #Adecuar la pila
         pila.push('$')
@@ -124,17 +132,17 @@ class Sintactico:
             else:
                 break
     
-            input("...")
+            #input("...")
         
         
         if aceptacion:
-            print ("ACEPTADO")
+            return (1, "Aceptado")
             
         else:
-            print ("ERROR")
+            return (0, "No aceptado.")
             
 
-s = Sintactico()
+"""s = Sintactico()
 s.cargarGramatica("compilador.lr")
 
 print(s.getReglas())
@@ -142,5 +150,5 @@ print(s.getIdReglas())
 print(s.getLonReglas())
 print(s.getTablaLR())
 
-s.analizar()
+s.analizar()"""
     
